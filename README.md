@@ -32,12 +32,6 @@ A production-ready backend service that provides RESTful endpoints and real-time
 - MongoDB connection: the database URI used to connect to a local or hosted MongoDB instance.
 - CORS origins: a single origin or comma-separated list to restrict which frontends can access the API and socket connection.
 
-## How to run
-- Ensure Node.js is installed.
-- Ensure MongoDB is available locally or via a hosted service.
-- Provide environment values for the port, database URI, and allowed origins.
-- Start the service in development mode for automatic restarts, or in production mode for a stable runtime.
-
 ## API overview
 - Health check endpoint: returns the operational status and current server time. This is helpful for uptime monitoring and basic diagnostics.
 - Example “hello” endpoint: returns a simple JSON message to confirm the server is reachable and responding. Additional business endpoints can be added following the same pattern.
@@ -47,20 +41,3 @@ A production-ready backend service that provides RESTful endpoints and real-time
 - Messages sent by a connected client can be broadcast to all other clients or routed according to future business rules.
 - The connection lifecycle (connect and disconnect events) is logged to assist with debugging.
 
-## Security and best practices
-- Restrict allowed origins in production to trusted domains only.
-- Store secrets such as database credentials in environment variables or a secure secret manager.
-- Consider rate limiting, authentication, and authorization for non-public routes and events.
-- Enforce input validation for both HTTP requests and socket events.
-
-## Extensibility
-- Add models to represent domain entities and encapsulate database logic.
-- Add routes to expand the REST API surface for your application.
-- Add socket event namespaces and rooms to segment real-time traffic by feature or tenant.
-- Integrate observability (metrics and tracing) to monitor performance and reliability.
-
-## Troubleshooting
-- If the server does not start, verify that the database is reachable and that configuration values are set.
-- If browsers fail to connect via WebSocket, confirm that the allowed origins include the frontend address and that network proxies permit WebSocket upgrades.
-- Use server logs to trace connection events and request handling during development.
-# Socket
