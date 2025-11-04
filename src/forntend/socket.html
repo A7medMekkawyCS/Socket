@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Socket.io Chat | تجربة أحمد مكّاوي</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #004e92, #000428);
+            font-family: "Cairo", sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #fff;
+        }
+
+        .chat-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+            width: 420px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #00e6ff;
+        }
+
+        #messages {
+            flex: 1;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+
+        .message {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            word-wrap: break-word;
+        }
+
+        .self {
+            background: #00e6ff33;
+            align-self: flex-end;
+            text-align: right;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+            font-size: 1em;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            background: #00e6ff;
+            color: #000;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #00bfff;
+        }
+
+        #status {
+            text-align: center;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            color: #ffd700;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="chat-container">

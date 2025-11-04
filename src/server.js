@@ -1,57 +1,62 @@
-const http = require('http');
-const path = require('path');
-const express = require('express');
-const cors = require('cors');
-const morgan = require('morgan');
-const dotenv = require('dotenv');
-const { Server } = require('socket.io');
-const { connectToDatabase } = require('./config/db');
+// server.js
+require('dotenv').config();
+const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
+const cors = require("cors");
+const { connectToDatabase } = require("./config/db");
+const Message = require("./models/Message");
 
-dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+connectToDatabase();
 
 const app = express();
+app.use(cors());
+app.get("/", (req, res) => {
+  res.send("✅ Socket.io Server is running...");
+});
+
 const server = http.createServer(app);
 const io = new Server(server, {
-	cors: {
-		origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : '*',
-		methods: ['GET', 'POST']
-	}
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
 });
 
-// Middleware
-app.use(cors({ origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : '*' }));
-app.use(express.json());
-app.use(morgan('dev'));
+// socket.io structure: كل غرفة = room name
+io.on("connection", (socket) => {
+  let username = "زائر";
+  let room = "عام";
 
-// Health route
-app.get('/health', (req, res) => {
-	return res.json({ status: 'ok', time: new Date().toISOString() });
-});
+  // استقبال انضمام غرفة واسم
+  socket.on("join", async ({ name, toRoom }) => {
+    username = name || "زائر";
+    room = toRoom || "عام";
+    socket.join(room);
+    // جلب رسائل الغرفة
+    const allMessages = await Message.find({ room }).sort({ createdAt: 1 }).lean();
+    socket.emit("allMessages", allMessages.map(m => ({ body: m.body, sender: m.sender, createdAt: m.createdAt })));
+    // إشعار دخول
+    socket.to(room).emit("notif", `${username} انضم للغرفة ✨`);
+  });
 
-// Basic API route example
-app.get('/api/hello', (req, res) => {
-	res.json({ message: 'Hello from Express + Socket.IO backend' });
-});
+  // إرسال رسالة
+  socket.on("message", async (data) => {
+    const msg = await Message.create({ body: data, sender: username, room });
+    io.in(room).emit("message", { body: msg.body, sender: username, createdAt: msg.createdAt });
+  });
 
-// Socket.IO handlers
-io.on('connection', (socket) => {
-	console.log('Client connected:', socket.id);
+  // typing event
+  socket.on("typing", (typing) => {
+    socket.to(room).emit("typing", { username, typing });
+  });
 
-	socket.on('message', (data) => {
-		// Broadcast to all clients
-		io.emit('message', { from: socket.id, data });
-	});
-
-	socket.on('disconnect', (reason) => {
-		console.log('Client disconnected:', socket.id, reason);
-	});
+  socket.on("disconnect", () => {
+    socket.to(room).emit("notif", `${username} غادر 👋🏽`);
+  });
 });
 
 const PORT = process.env.PORT || 4000;
-
-(async () => {
-	await connectToDatabase();
-	server.listen(PORT, () => {
-		console.log(`Server listening on port ${PORT}`);
-	});
-})(); 
+server.listen(PORT, () => {
+  console.log(`🚀 Socket.io Server running on http://localhost:${PORT}`);
+});
