@@ -11,8 +11,13 @@ connectToDatabase();
 
 const app = express();
 app.use(cors());
+const path = require("path");
+
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+
 app.get("/", (req, res) => {
-  res.send("<button>send</button>");
+  res.render("chat");
 });
 
 const server = http.createServer(app);
@@ -57,24 +62,13 @@ io.on("connection", (socket) => {
   socket.on("typing", (typing) => {
     socket.to(room).emit("typing", { username, typing });
   });
-  socket.on("voice", async () => {
-    const voice = await MediaKeyMessageEvent.create({
-      body: data,
-      sender: username,
-      room,
-    });
-    io.in(room).emit("voice", {
-      body: voice.body,
-      sender: username,
-    });
-  });
 
   socket.on("disconnect", () => {
-    socket.to(room).emit("notif", `${username} غادر 👋🏽`);
+    socket.to(room).emit("notif", `${username} Exit 👋🏽`);
   });
 });
 
 const PORT = process.env.PORT || 4000;
 server.listen(PORT, () => {
-  console.log(`🚀 Socket.io Server running on ${PORT}`);
+  console.log(`🚀 Socket.io Server running on http://localhost:${PORT}`);
 });
