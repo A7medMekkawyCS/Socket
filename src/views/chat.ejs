@@ -2,229 +2,352 @@
 <html lang="ar">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mekky Chat 💬</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap');
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mekky Chat 💚</title>
 
-        body {
-            font-family: 'Cairo', sans-serif;
-            background-color: #e5ddd5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
 
-        .chat-container {
-            background: #fff;
-            width: 400px;
-            height: 600px;
-            border-radius: 20px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+    * {
+      box-sizing: border-box;
+    }
 
-        .header {
-            background: #075e54;
-            color: #fff;
-            padding: 15px;
-            text-align: center;
-            font-weight: 600;
-            font-size: 1.2rem;
-            letter-spacing: 0.5px;
-        }
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: linear-gradient(130deg, #a8edea, #b2f0c0);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
 
-        .inputs {
-            background: #ededed;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            border-bottom: 1px solid #ccc;
-        }
+    .chat-container {
+      background: #fff;
+      width: 420px;
+      height: 640px;
+      max-width: 95vw;
+      max-height: 95vh;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: appear 0.7s ease-out;
+    }
 
-        .inputs input {
-            padding: 8px 10px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            outline: none;
-            font-size: 0.9rem;
-        }
+    @keyframes appear {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
 
-        #messages {
-            flex: 1;
-            background: #dcf8c6;
-            padding: 10px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
 
-        .msg {
-            max-width: 75%;
-            padding: 8px 12px;
-            border-radius: 12px;
-            font-size: 0.9rem;
-            word-wrap: break-word;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            animation: fadeIn 0.3s ease;
-        }
+    .header {
+      background: #128c7e;
+      color: #fff;
+      padding: 15px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.3rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+      letter-spacing: 0.5px;
+    }
 
-        .mine {
-            background: #a2f5a2;
-            align-self: flex-end;
-            border-bottom-right-radius: 0;
-        }
+    .inputs {
+      background: #ededed;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      border-bottom: 1px solid #ccc;
+    }
 
-        .other {
-            background: #fff;
-            align-self: flex-start;
-            border-bottom-left-radius: 0;
-        }
+    .inputs input {
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      outline: none;
+      font-size: 0.9rem;
+      transition: 0.3s;
+    }
 
-        .notif {
-            color: gray;
-            text-align: center;
-            font-size: 0.8rem;
-            margin: 5px 0;
-        }
+    .inputs input:focus {
+      border-color: #25d366;
+      box-shadow: 0 0 6px #b9f6ca;
+    }
 
-        .footer {
-            background: #f0f0f0;
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            border-top: 1px solid #ccc;
-        }
+    #messages {
+      flex: 1;
+      background: #e5ddd5;
+      padding: 12px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      scroll-behavior: smooth;
+    }
 
-        textarea {
-            flex: 1;
-            resize: none;
-            border: none;
-            border-radius: 12px;
-            padding: 8px;
-            font-size: 0.9rem;
-            outline: none;
-            height: 45px;
-        }
+    .msg {
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      word-wrap: break-word;
+      position: relative;
+      animation: fadeIn 0.3s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
 
-        button {
-            background: #25d366;
-            color: #fff;
-            border: none;
-            border-radius: 50%;
-            width: 45px;
-            height: 45px;
-            margin-left: 8px;
-            cursor: pointer;
-            font-size: 1.2rem;
-            transition: 0.2s;
-        }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
 
-        button:hover {
-            background: #20b857;
-        }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(5px);
-            }
+    .mine {
+      background: #dcf8c6;
+      align-self: flex-end;
+      border-bottom-right-radius: 0;
+    }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    </style>
+    .other {
+      background: #fff;
+      align-self: flex-start;
+      border-bottom-left-radius: 0;
+    }
+
+    .footer {
+      background: #f0f0f0;
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border-top: 1px solid #ccc;
+    }
+
+    textarea {
+      flex: 1;
+      resize: none;
+      border: none;
+      border-radius: 12px;
+      padding: 10px;
+      font-size: 0.9rem;
+      outline: none;
+      height: 45px;
+      background: #fff;
+    }
+
+    button {
+      background: #25d366;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      margin-left: 8px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: 0.2s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 3px 10px rgba(37, 211, 102, 0.3);
+    }
+
+    button:hover {
+      background: #20b857;
+      transform: scale(1.1);
+    }
+
+    .notify {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #25d366;
+      color: white;
+      padding: 12px 22px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+      animation: fadeInOut 3s ease forwards;
+      font-weight: 600;
+      z-index: 9999;
+      font-size: 0.9rem;
+    }
+
+    @keyframes fadeInOut {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -20px);
+      }
+
+      15% {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+
+      80% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -20px);
+      }
+    }
+
+    #typing {
+      text-align: center;
+      color: gray;
+      font-size: 0.8rem;
+      margin: 5px 0;
+    }
+
+    /* موبايل */
+    @media (max-width: 500px) {
+      .chat-container {
+        width: 100%;
+        height: 100%;
+        border-radius: 0;
+      }
+
+      .inputs input {
+        font-size: 1rem;
+      }
+
+      textarea {
+        font-size: 1rem;
+      }
+
+      .msg {
+        font-size: 1rem;
+      }
+
+      .header {
+        font-size: 1.1rem;
+      }
+    }
+  </style>
 </head>
 
 <body>
-    <div class="chat-container">
-        <div class="header">💬 Mekky Chat</div>
+  <div class="chat-container">
+    <div class="header">💚 Mekky Chat</div>
 
-        <div class="inputs">
-            <input id="name" type="text" placeholder="ادخل اسمك" />
-            <input id="room" type="text" placeholder="اسم الغرفة (اختياري)" />
-        </div>
-
-        <div id="messages"></div>
-
-        <div class="footer">
-            <textarea id="msg" placeholder="اكتب رسالتك..."></textarea>
-            <button id="send">➤</button>
-        </div>
+    <div class="inputs">
+      <input id="name" type="text" placeholder="ادخل اسمك" />
+      <input id="room" type="text" placeholder="اسم الغرفة (اختياري)" />
     </div>
 
-    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
-    <script>
-        const socket = io();
-        const nameInput = document.getElementById('name');
-        const roomInput = document.getElementById('room');
-        const msgInput = document.getElementById('msg');
-        const sendBtn = document.getElementById('send');
-        const messages = document.getElementById('messages');
+    <div id="messages"></div>
+    <div id="typing"></div>
 
-        let joined = false;
-        let username = '';
+    <div class="footer">
+      <textarea id="msg" placeholder="اكتب رسالتك..."></textarea>
+      <button id="send">➤</button>
+    </div>
+  </div>
 
-        sendBtn.addEventListener('click', sendMessage);
-        msgInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
+  <audio id="newMsgSound" src="notify.wav" preload="auto"></audio>
 
-        function sendMessage() {
-            const name = nameInput.value.trim() || 'ضيف';
-            const room = roomInput.value.trim() || 'public';
-            const msg = msgInput.value.trim();
-            if (!msg) return;
+  <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+  <script>
+    const socket = io();
+    const nameInput = document.getElementById('name');
+    const roomInput = document.getElementById('room');
+    const msgInput = document.getElementById('msg');
+    const sendBtn = document.getElementById('send');
+    const messages = document.getElementById('messages');
+    const typingDiv = document.getElementById('typing');
+    const newMsgSound = document.getElementById('newMsgSound');
 
-            if (!joined) {
-                socket.emit('join', { name, toRoom: room });
-                username = name;
-                joined = true;
-            }
+    let joined = false;
+    let username = '';
 
-            socket.emit('message', msg);
-            msgInput.value = '';
-        }
+    sendBtn.addEventListener('click', sendMessage);
+    msgInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
 
-        socket.on('allMessages', (msgs) => {
-            messages.innerHTML = '';
-            msgs.forEach((m) => {
-                addMessage(m.sender, m.body);
-            });
-        });
+    msgInput.addEventListener('input', () => {
+      socket.emit('typing', msgInput.value.length > 0);
+    });
 
-        socket.on('message', (data) => {
-            addMessage(data.sender, data.body);
-        });
+    function sendMessage() {
+      const name = nameInput.value.trim() || 'ضيف';
+      const room = roomInput.value.trim() || 'public';
+      const msg = msgInput.value.trim();
+      if (!msg) return;
 
-        socket.on('notif', (data) => {
-            const div = document.createElement('div');
-            div.className = 'notif';
-            div.textContent = data;
-            messages.appendChild(div);
-            messages.scrollTop = messages.scrollHeight;
-        });
+      if (!joined) {
+        socket.emit('join', { name, toRoom: room });
+        username = name;
+        joined = true;
+      }
 
-        function addMessage(sender, body) {
-            const div = document.createElement('div');
-            div.className = 'msg ' + (sender === username ? 'mine' : 'other');
-            div.textContent = `${sender}: ${body}`;
-            messages.appendChild(div);
-            messages.scrollTop = messages.scrollHeight;
-        }
-    </script>
+      socket.emit('message', msg);
+      msgInput.value = '';
+      socket.emit('typing', false);
+    }
+
+    socket.on('allMessages', msgs => {
+      messages.innerHTML = '';
+      msgs.forEach(m => addMessage(m.sender, m.body));
+    });
+
+    socket.on('message', data => {
+      addMessage(data.sender, data.body);
+      if (data.sender !== username) playSound();
+    });
+
+    socket.on('notif', text => {
+      showNotif(text);
+      playSound();
+    });
+
+    socket.on('typing', data => {
+      typingDiv.textContent = data.typing ? `✍️ ${data.username} يكتب الآن...` : '';
+    });
+
+    function addMessage(sender, body) {
+      const div = document.createElement('div');
+      div.className = 'msg ' + (sender === username ? 'mine' : 'other');
+      div.innerHTML = `<strong>${sender}:</strong> ${body}`;
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function showNotif(text) {
+      const notif = document.createElement('div');
+      notif.className = 'notify';
+      notif.textContent = text;
+      document.body.appendChild(notif);
+      setTimeout(() => notif.remove(), 3000);
+    }
+
+    function playSound() {
+      newMsgSound.currentTime = 0;
+      newMsgSound.play().catch(err => console.log("🔇 المتصفح منع التشغيل:", err));
+    }
+  </script>
 </body>
 
 </html>
