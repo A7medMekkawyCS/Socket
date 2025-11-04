@@ -4,69 +4,162 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Socket.io Chat</title>
+    <title>Mekky Chat 💬</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap');
+
         body {
             font-family: 'Cairo', sans-serif;
-            background-color: #f2f2f2;
+            background-color: #e5ddd5;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            margin: 0;
         }
 
-        .chat-box {
+        .chat-container {
             background: #fff;
-            border-radius: 10px;
-            padding: 20px;
             width: 400px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            height: 600px;
+            border-radius: 20px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            background: #075e54;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+            letter-spacing: 0.5px;
+        }
+
+        .inputs {
+            background: #ededed;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .inputs input {
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            outline: none;
+            font-size: 0.9rem;
         }
 
         #messages {
-            border: 1px solid #ddd;
-            height: 300px;
-            overflow-y: scroll;
+            flex: 1;
+            background: #dcf8c6;
             padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            background: #fafafa;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .msg {
+            max-width: 75%;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            word-wrap: break-word;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .mine {
+            background: #a2f5a2;
+            align-self: flex-end;
+            border-bottom-right-radius: 0;
+        }
+
+        .other {
+            background: #fff;
+            align-self: flex-start;
+            border-bottom-left-radius: 0;
+        }
+
+        .notif {
+            color: gray;
+            text-align: center;
+            font-size: 0.8rem;
+            margin: 5px 0;
+        }
+
+        .footer {
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-top: 1px solid #ccc;
         }
 
         textarea {
-            width: 100%;
-            height: 60px;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
+            flex: 1;
             resize: none;
-        }
-
-        input,
-        button {
+            border: none;
+            border-radius: 12px;
             padding: 8px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            margin-top: 8px;
+            font-size: 0.9rem;
+            outline: none;
+            height: 45px;
         }
 
         button {
-            width: 100%;
-            background: #4CAF50;
-            color: white;
+            background: #25d366;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            margin-left: 8px;
             cursor: pointer;
+            font-size: 1.2rem;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #20b857;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="chat-box">
-        <h3>💬 Mekky Chat</h3>
-        <input id="name" type="text" placeholder="ادخل اسمك" />
-        <input id="room" type="text" placeholder="اسم الغرفة (اختياري)" />
+    <div class="chat-container">
+        <div class="header">💬 Mekky Chat</div>
+
+        <div class="inputs">
+            <input id="name" type="text" placeholder="ادخل اسمك" />
+            <input id="room" type="text" placeholder="اسم الغرفة (اختياري)" />
+        </div>
+
         <div id="messages"></div>
-        <textarea id="msg" placeholder="اكتب رسالتك..."></textarea>
-        <button id="send">إرسال</button>
+
+        <div class="footer">
+            <textarea id="msg" placeholder="اكتب رسالتك..."></textarea>
+            <button id="send">➤</button>
+        </div>
     </div>
 
     <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
@@ -79,8 +172,17 @@
         const messages = document.getElementById('messages');
 
         let joined = false;
+        let username = '';
 
-        sendBtn.addEventListener('click', () => {
+        sendBtn.addEventListener('click', sendMessage);
+        msgInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
             const name = nameInput.value.trim() || 'ضيف';
             const room = roomInput.value.trim() || 'public';
             const msg = msgInput.value.trim();
@@ -88,36 +190,40 @@
 
             if (!joined) {
                 socket.emit('join', { name, toRoom: room });
+                username = name;
                 joined = true;
             }
 
             socket.emit('message', msg);
             msgInput.value = '';
-        });
+        }
 
         socket.on('allMessages', (msgs) => {
             messages.innerHTML = '';
             msgs.forEach((m) => {
-                const div = document.createElement('div');
-                div.textContent = `${m.sender}: ${m.body}`;
-                messages.appendChild(div);
+                addMessage(m.sender, m.body);
             });
         });
 
         socket.on('message', (data) => {
-            const div = document.createElement('div');
-            div.textContent = `${data.sender}: ${data.body}`;
-            messages.appendChild(div);
-            messages.scrollTop = messages.scrollHeight;
+            addMessage(data.sender, data.body);
         });
 
         socket.on('notif', (data) => {
             const div = document.createElement('div');
-            div.style.color = 'gray';
+            div.className = 'notif';
             div.textContent = data;
             messages.appendChild(div);
             messages.scrollTop = messages.scrollHeight;
         });
+
+        function addMessage(sender, body) {
+            const div = document.createElement('div');
+            div.className = 'msg ' + (sender === username ? 'mine' : 'other');
+            div.textContent = `${sender}: ${body}`;
+            messages.appendChild(div);
+            messages.scrollTop = messages.scrollHeight;
+        }
     </script>
 </body>
 

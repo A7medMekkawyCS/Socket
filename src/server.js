@@ -31,7 +31,7 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
   let username = "gest";
   let room = "public";
-
+  
   socket.on("join", async ({ name, toRoom }) => {
     username = name || "gest";
     room = toRoom || "public";
